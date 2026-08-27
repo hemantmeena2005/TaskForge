@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-0: #101116;
+  --bg-1: #171923;
+  --bg-2: #1E212C;
+  --bg-3: #262A38;
+  --ember: #FF6A39;
+  --ember-dim: #4A2A1D;
+  --steel: #5B8DEF;
+  --steel-dim: #1E2A40;
+  --teal: #2BB673;
+  --teal-dim: #123227;
+  --amber: #E8A93B;
+  --red: #E5484D;
+  --text-hi: #EDEEF3;
+  --text-mid: #9A9CAA;
+  --text-lo: #5F6272;
+  --border: #2A2D3A;
+}
+
+body {
+  background: var(--bg-0);
+  color: var(--text-hi);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-3);
+  border-radius: 6px;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}

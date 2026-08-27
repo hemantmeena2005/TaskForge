@@ -1,0 +1,35 @@
+# Production overrides: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+services:
+  backend:
+    restart: always
+    env_file:
+      - .env
+    volumes: []
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+  consumer:
+    restart: always
+    env_file:
+      - .env
+    volumes: []
+
+  frontend:
+    restart: always
+    volumes: []
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+  postgres:
+    restart: always
+
+  redis:
+    restart: always
+
+  kafka:
+    restart: always
+
+  zookeeper:
+    restart: always
