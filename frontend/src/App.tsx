@@ -37,6 +37,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
           <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
           <Route
@@ -46,7 +47,6 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/organizations" element={<OrganizationsPage />} />
             <Route path="/board" element={<BoardPage />} />
