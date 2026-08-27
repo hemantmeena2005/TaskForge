@@ -218,19 +218,20 @@ export default function SprintPage() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex items-end justify-between">
+      <div className="flex flex-row items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl font-bold">Sprints</h1>
-          <p className="text-sm text-[var(--text-mid)] mt-1">Plan sprints, assign backlog issues, track delivery</p>
+          <h1 className="font-display text-lg sm:text-xl font-bold">Sprints</h1>
+          <p className="text-xs text-[var(--text-mid)] hidden sm:block mt-0.5">Plan sprints, assign backlog issues, track delivery</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <ProjectSelector />
           <button
             onClick={() => setIsCreating(true)}
             disabled={!projectId}
-            className="px-4 py-2 bg-[var(--ember)] text-[#20100A] text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 transition"
+            className="px-3 py-1.5 bg-[var(--ember)] text-[#20100A] text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 transition flex items-center gap-1"
           >
-            + Create Sprint
+            <span className="text-sm font-bold">+</span>
+            <span className="hidden sm:inline">Create Sprint</span>
           </button>
         </div>
       </div>
@@ -279,25 +280,31 @@ export default function SprintPage() {
         <SprintSkeleton />
       ) : activeSprint ? (
         <div className="bg-[var(--bg-1)] border border-[var(--border)] rounded-xl p-6 space-y-5 shadow-sm animate-in fade-in duration-200">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--steel-dim)] text-[#BFD4FF] rounded-full">
+          <div className="flex flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-[var(--steel-dim)] text-[#BFD4FF] rounded-full">
                 Active Sprint
               </span>
-              <h2 className="font-display font-bold text-lg text-[var(--text-hi)]">{activeSprint.name}</h2>
+              <h2 className="font-display font-bold text-base sm:text-lg text-[var(--text-hi)] truncate">{activeSprint.name}</h2>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 onClick={() => setShowAddIssuesModal(true)}
-                className="px-3.5 py-2 bg-[var(--bg-2)] border border-[var(--border)] text-xs font-semibold rounded-lg hover:bg-[var(--bg-3)] transition flex items-center gap-1.5"
+                className="px-2.5 py-1.5 bg-[var(--bg-2)] border border-[var(--border)] text-xs font-semibold rounded-lg hover:bg-[var(--bg-3)] transition flex items-center gap-1"
+                title="Add Issues to Sprint"
               >
-                <span>+</span> Add Issues to Sprint
+                <span className="text-sm font-bold">+</span>
+                <span className="hidden sm:inline">Add Issues</span>
               </button>
               <button
                 onClick={() => completeMutation.mutate(activeSprint.id)}
-                className="px-3.5 py-2 bg-[var(--bg-2)] border border-[var(--border)] text-xs font-semibold text-[var(--text-hi)] rounded-lg hover:bg-[var(--bg-3)] transition"
+                className="px-2.5 py-1.5 bg-[var(--bg-2)] border border-[var(--border)] text-xs font-semibold text-[var(--text-hi)] rounded-lg hover:bg-[var(--bg-3)] transition flex items-center gap-1"
+                title="Complete Sprint"
               >
-                Complete Sprint
+                <svg className="w-3.5 h-3.5 text-[var(--teal)]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                <span className="hidden sm:inline">Complete</span>
               </button>
             </div>
           </div>

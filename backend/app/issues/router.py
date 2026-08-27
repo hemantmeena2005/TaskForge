@@ -398,6 +398,7 @@ async def get_project_board(
 
 
 @router.post("/issues/{issue_id}/move", response_model=IssueResponse)
+@router.patch("/issues/{issue_id}/move", response_model=IssueResponse)
 async def move_issue_status(
     issue_id: str,
     body: IssueMoveRequest,

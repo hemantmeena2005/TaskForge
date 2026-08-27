@@ -163,62 +163,69 @@ export default function BacklogPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-row items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl font-bold">Backlog & My Tasks</h1>
-          <p className="text-sm text-[var(--text-mid)] mt-1">
-            Review and prioritize work assigned to you and backlog items
+          <h1 className="font-display text-lg sm:text-xl font-bold">Backlog</h1>
+          <p className="text-xs text-[var(--text-mid)] hidden sm:block mt-0.5">
+            Review and prioritize work assigned to you and project backlog
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <ProjectSelector />
           <button
             onClick={() => setShowCreateModal(true)}
             disabled={!projectId}
-            className="px-3.5 py-2 bg-[var(--ember)] text-[#20100A] text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 transition flex items-center gap-1.5 shadow-sm"
+            className="px-3 py-1.5 bg-[var(--ember)] text-[#20100A] text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 transition flex items-center gap-1.5 shadow-sm"
           >
-            <span>+</span> Create Issue
+            <span className="text-sm font-bold">+</span>
+            <span className="hidden sm:inline">Create Issue</span>
           </button>
         </div>
       </div>
 
       {/* Mode & Filters Toolbar */}
-      <div className="bg-[var(--bg-1)] border border-[var(--border)] rounded-xl p-4 space-y-4 shadow-sm">
-        {/* Scope Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] pb-3">
-          <div className="flex items-center gap-2">
+      <div className="bg-[var(--bg-1)] border border-[var(--border)] rounded-xl p-3 sm:p-4 space-y-3 sm:space-y-4 shadow-sm">
+        {/* Scope Tabs & Search */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[var(--border)] pb-3">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={() => setViewMode("assigned_to_me")}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition flex items-center gap-2 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition flex items-center gap-1.5 ${
                 viewMode === "assigned_to_me"
                   ? "bg-[var(--steel-dim)] text-[#BFD4FF]"
                   : "text-[var(--text-mid)] hover:text-[var(--text-hi)] hover:bg-[var(--bg-2)]"
               }`}
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              Assigned to Me ({myAssignedIssues?.length || 0})
+              <span>Assigned</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[var(--bg-3)]">
+                {myAssignedIssues?.length || 0}
+              </span>
             </button>
 
             <button
               onClick={() => setViewMode("project_backlog")}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition flex items-center gap-2 ${
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition flex items-center gap-1.5 ${
                 viewMode === "project_backlog"
                   ? "bg-[var(--steel-dim)] text-[#BFD4FF]"
                   : "text-[var(--text-mid)] hover:text-[var(--text-hi)] hover:bg-[var(--bg-2)]"
               }`}
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
-              Project Backlog ({projectBacklogData?.total || 0})
+              <span>Backlog</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[var(--bg-3)]">
+                {projectBacklogData?.total || 0}
+              </span>
             </button>
           </div>
 
           {/* Search bar */}
-          <div className="w-64 relative">
+          <div className="w-full sm:w-60 relative">
             <svg
               className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-lo)]"
               fill="none"
@@ -239,16 +246,12 @@ export default function BacklogPage() {
           </div>
         </div>
 
-        {/* Priority Filters */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[11px] font-semibold text-[var(--text-mid)] uppercase tracking-wider mr-1">
-              Priority:
-            </span>
-
+        {/* Priority Filters & Status */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
             <button
               onClick={() => setPriorityFilter("ALL")}
-              className={`px-2.5 py-1 text-xs rounded-md transition font-medium ${
+              className={`px-2.5 py-1 text-xs rounded-md transition font-medium flex-shrink-0 ${
                 priorityFilter === "ALL"
                   ? "bg-[var(--bg-3)] text-[var(--text-hi)] font-bold"
                   : "text-[var(--text-lo)] hover:text-[var(--text-hi)]"
@@ -264,7 +267,7 @@ export default function BacklogPage() {
                 <button
                   key={p}
                   onClick={() => setPriorityFilter(isSelected ? "ALL" : p)}
-                  className="px-2.5 py-1 text-xs rounded-md font-medium transition flex items-center gap-1.5"
+                  className="px-2 py-1 text-[11px] rounded-md font-medium transition flex items-center gap-1 flex-shrink-0"
                   style={{
                     background: isSelected ? conf.bg : "transparent",
                     color: isSelected ? conf.color : "var(--text-mid)",
@@ -273,7 +276,7 @@ export default function BacklogPage() {
                 >
                   <span>{conf.label}</span>
                   {priorityCounts[p] > 0 && (
-                    <span className="text-[10px] opacity-75 font-mono">({priorityCounts[p]})</span>
+                    <span className="text-[9px] opacity-75 font-mono">({priorityCounts[p]})</span>
                   )}
                 </button>
               );

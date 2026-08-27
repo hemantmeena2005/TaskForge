@@ -70,10 +70,19 @@ api.interceptors.response.use(
     }
 
     const data = error.response?.data as
-      | { error?: { message?: string } }
+      | { error?: { message?: string }; detail?: string | { msg?: string }[]; message?: string }
       | undefined;
-    const message = data?.error?.message || "An unexpected error occurred";
-    return Promise.reject(new Error(message));
+
+    let message: string | undefined = data?.error?.message;
+    if (!message && typeof data?.detail === "string") {
+      message = data.detail;
+    } else if (!message && Array.isArray(data?.detail) && data.detail[0]?.msg) {
+      message = data.detail[0].msg;
+    } else if (!message && data?.message) {
+      message = data.message;
+    }
+
+    return Promise.reject(new Error(message || error.message || "An unexpected error occurred"));
   }
 );
 

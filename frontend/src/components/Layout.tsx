@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/lib/auth";
 import NotificationCenter from "@/components/NotificationCenter";
@@ -17,6 +18,7 @@ export default function Layout() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const setTokens = useAuthStore((s) => s.setTokens);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const displayName = user?.full_name || user?.username || "User";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -28,80 +30,140 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-56 bg-[var(--bg-1)] border-r border-[var(--border)] flex flex-col p-4 gap-6">
-        <Link to="/" className="flex items-center gap-2 px-1">
-          <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[var(--ember)] to-[#C9401A] flex items-center justify-center text-xs font-bold text-[#1a0d05] font-display">
-            TF
-          </div>
-          <span className="font-display font-bold text-[var(--text-hi)]">TaskForge</span>
-        </Link>
+    <div className="flex min-h-screen bg-[var(--bg-0)] text-[var(--text-hi)]">
+      {/* Mobile Drawer Overlay */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm animate-in fade-in duration-200"
+        />
+      )}
 
-        <nav className="flex flex-col gap-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition ${
-                location.pathname === item.to
-                  ? "bg-[var(--ember-dim)] text-[#FFB79A]"
-                  : "text-[var(--text-mid)] hover:bg-[var(--bg-2)] hover:text-[var(--text-hi)]"
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d={item.icon} />
-              </svg>
-              {item.label}
-            </Link>
-          ))}
+      {/* Sidebar (Desktop fixed, Mobile sliding drawer) */}
+      <aside
+        className={`fixed md:sticky top-0 h-screen w-64 md:w-56 bg-[var(--bg-1)] border-r border-[var(--border)] flex flex-col p-4 gap-6 z-50 transition-transform duration-200 ease-in-out ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        <div className="flex items-center justify-between px-1">
+          <Link
+            to="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2"
+          >
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[var(--ember)] to-[#C9401A] flex items-center justify-center text-xs font-bold text-[#1a0d05] font-display shadow-md">
+              TF
+            </div>
+            <span className="font-display font-bold text-base text-[var(--text-hi)]">TaskForge</span>
+          </Link>
+
+          {/* Close button on mobile */}
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="md:hidden p-1.5 text-[var(--text-mid)] hover:text-[var(--text-hi)] hover:bg-[var(--bg-2)] rounded-lg transition"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-1 flex-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition font-medium ${
+                  isActive
+                    ? "bg-[var(--ember-dim)] text-[#FFB79A]"
+                    : "text-[var(--text-mid)] hover:bg-[var(--bg-2)] hover:text-[var(--text-hi)]"
+                }`}
+              >
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d={item.icon} />
+                </svg>
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="mt-auto border-t border-[var(--border)] pt-4">
           <div className="flex items-center gap-2.5 px-1">
-            <div className="w-8 h-8 rounded-full bg-[var(--steel-dim)] text-[#BFD4FF] text-xs font-semibold flex items-center justify-center font-display">
+            <div className="w-8 h-8 rounded-full bg-[var(--steel-dim)] text-[#BFD4FF] text-xs font-semibold flex items-center justify-center font-display flex-shrink-0">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium truncate">{displayName}</div>
-              <button onClick={handleLogout} className="text-xs text-[var(--text-lo)] hover:text-[var(--red)] transition">
-                Logout
+              <div className="text-xs font-semibold truncate text-[var(--text-hi)]">{displayName}</div>
+              <button onClick={handleLogout} className="text-[11px] text-[var(--text-lo)] hover:text-[var(--red)] transition block text-left">
+                Sign out
               </button>
             </div>
           </div>
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col min-w-0">
-        <header className="h-14 border-b border-[var(--border)] flex items-center justify-between px-6 gap-4 bg-[var(--bg-1)]/30 backdrop-blur-sm">
-          <div className="text-sm text-[var(--text-mid)]">
-            TaskForge <span className="text-[var(--text-lo)]">/</span>{" "}
-            <span className="text-[var(--text-hi)] font-medium">
-              {navItems.find((n) => n.to === location.pathname)?.label || "Home"}
-            </span>
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0 overflow-x-hidden">
+        {/* Top Header */}
+        <header className="h-14 border-b border-[var(--border)] flex items-center justify-between px-3 sm:px-6 gap-2 bg-[var(--bg-1)]/40 backdrop-blur-md sticky top-0 z-30">
+          <div className="flex items-center gap-2">
+            {/* Mobile Hamburger Toggle Button */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden p-1.5 text-[var(--text-mid)] hover:text-[var(--text-hi)] hover:bg-[var(--bg-2)] rounded-lg transition"
+              aria-label="Open Navigation Menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            <div className="text-xs sm:text-sm text-[var(--text-mid)] truncate">
+              <span className="hidden sm:inline">TaskForge <span className="text-[var(--text-lo)]">/</span> </span>
+              <span className="text-[var(--text-hi)] font-semibold">
+                {navItems.find((n) => n.to === location.pathname)?.label || "Home"}
+              </span>
+            </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="w-64 relative">
-              <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-lo)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search issues..."
-                className="w-full bg-[var(--bg-2)] border border-[var(--border)] rounded-lg py-1.5 pl-9 pr-3 text-xs text-[var(--text-hi)] placeholder:text-[var(--text-lo)] focus:outline-none focus:border-[var(--steel)]"
-              />
-            </div>
-
+          <div className="flex items-center gap-2">
             <NotificationCenter />
           </div>
         </header>
 
-        <div className="flex-1 p-6 overflow-auto">
+        {/* Dynamic Page Outlet */}
+        <div className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto overflow-x-auto">
           <Outlet />
+        </div>
+
+        {/* Mobile Bottom Icon Bar */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-[var(--bg-1)]/95 border-t border-[var(--border)] backdrop-blur-md z-30 flex items-center justify-around px-2">
+          {navItems.slice(0, 5).map((item) => {
+            const isActive = location.pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex flex-col items-center justify-center p-1.5 rounded-lg transition ${
+                  isActive ? "text-[var(--ember)]" : "text-[var(--text-lo)] hover:text-[var(--text-mid)]"
+                }`}
+                title={item.label}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d={item.icon} />
+                </svg>
+                <span className="text-[9px] font-medium tracking-tight mt-0.5">{item.label}</span>
+              </Link>
+            );
+          })}
         </div>
       </main>
 
-      {/* Global Real-Time Toast Notification Popups */}
+      {/* Global Live Toast Notification Popups */}
       <NotificationToastProvider />
     </div>
   );
