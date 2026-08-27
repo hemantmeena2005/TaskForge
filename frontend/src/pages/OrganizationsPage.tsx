@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 import OrgMembersManager from "@/components/OrgMembersManager";
 import ProjectMembersManager from "@/components/ProjectMembersManager";
+import { OrgSkeleton } from "@/components/LoadingSkeleton";
 
 interface Org {
   id: string;
@@ -274,7 +275,7 @@ export default function OrganizationsPage() {
         </div>
       )}
 
-      {isLoading && <div className="text-[var(--text-mid)] py-12 text-center text-xs">Loading organizations...</div>}
+      {isLoading && <OrgSkeleton />}
 
       {orgs && orgs.length === 0 && !creatingOrg && (
         <div className="text-center py-16 bg-[var(--bg-1)] border border-[var(--border)] rounded-xl space-y-3">

@@ -108,6 +108,8 @@ function BarRow({ label, count, total, barColor }: { label: string; count: numbe
   );
 }
 
+import { DashboardSkeleton } from "@/components/LoadingSkeleton";
+
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery<DashboardData>({
     queryKey: ["dashboard"],
@@ -118,7 +120,7 @@ export default function DashboardPage() {
   });
 
   if (isLoading) {
-    return <div className="text-[var(--text-mid)] py-12 text-center">Loading dashboard...</div>;
+    return <DashboardSkeleton />;
   }
 
   if (error || !data) {

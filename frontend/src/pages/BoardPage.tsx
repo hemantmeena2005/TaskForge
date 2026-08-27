@@ -4,6 +4,7 @@ import api from "@/lib/api";
 import ProjectSelector from "@/components/ProjectSelector";
 import IssueDetailModal from "@/components/IssueDetailModal";
 import { useProjectStore } from "@/lib/projectStore";
+import { BoardSkeleton } from "@/components/LoadingSkeleton";
 
 export interface Label {
   id: string;
@@ -169,8 +170,8 @@ export default function BoardPage() {
         </div>
       </div>
 
-      {isLoading && <div className="text-[var(--text-mid)] py-12 text-center">Loading board...</div>}
-      {isError && <div className="text-[var(--text-mid)] py-12 text-center">Select a project to view its board.</div>}
+      {isLoading && <BoardSkeleton />}
+      {isError && <div className="text-[var(--text-mid)] py-12 text-center bg-[var(--bg-1)] border border-[var(--border)] rounded-xl">Select a project above to view its Kanban board.</div>}
 
       {board && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
