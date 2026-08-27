@@ -4,6 +4,7 @@ import api from "@/lib/api";
 import ProjectSelector from "@/components/ProjectSelector";
 import IssueDetailModal from "@/components/IssueDetailModal";
 import { useProjectStore } from "@/lib/projectStore";
+import { IssueRowSkeleton } from "@/components/LoadingSkeleton";
 
 interface UserPublic {
   id: string;
@@ -303,7 +304,7 @@ export default function BacklogPage() {
           Please select a project from the header above to inspect its backlog items.
         </div>
       ) : isLoading ? (
-        <div className="text-[var(--text-mid)] py-12 text-center">Loading tasks...</div>
+        <IssueRowSkeleton count={5} />
       ) : issuesList.length > 0 ? (
         <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-xl bg-[var(--bg-1)] overflow-hidden shadow-sm">
           {issuesList.map((issue) => {

@@ -4,6 +4,7 @@ import api from "@/lib/api";
 import ProjectSelector from "@/components/ProjectSelector";
 import IssueDetailModal from "@/components/IssueDetailModal";
 import { useProjectStore } from "@/lib/projectStore";
+import { Spinner, SprintSkeleton, IssueRowSkeleton } from "@/components/LoadingSkeleton";
 
 export interface Sprint {
   id: string;
@@ -86,7 +87,7 @@ export default function SprintPage() {
   const [selectedBacklogIssueIds, setSelectedBacklogIssueIds] = useState<string[]>([]);
 
   // 1. Fetch Sprints
-  const { data: sprints, isLoading } = useQuery<Sprint[]>({
+  const { data: sprints, isLoading: loadingSprints } = useQuery<Sprint[]>({
     queryKey: ["sprints", projectId],
     queryFn: async () => {
       const res = await api.get(`/projects/${projectId}/sprints`);
@@ -108,7 +109,7 @@ export default function SprintPage() {
   });
 
   // 3. Fetch Issues inside Active Sprint
-  const { data: sprintIssuesData } = useQuery<IssueListResponse>({
+  const { data: sprintIssuesData, isLoading: loadingSprintIssues } = useQuery<IssueListResponse>({
     queryKey: ["sprint-issues", activeSprint?.id],
     queryFn: async () => {
       const res = await api.get(`/projects/${projectId}/issues?sprint_id=${activeSprint?.id}&page_size=100`);
@@ -118,7 +119,7 @@ export default function SprintPage() {
   });
 
   // 4. Fetch Backlog Issues (not in any sprint) for the "Add to Sprint" modal
-  const { data: backlogIssuesData } = useQuery<IssueListResponse>({
+  const { data: backlogIssuesData, isLoading: loadingBacklog } = useQuery<IssueListResponse>({
     queryKey: ["backlog-for-sprint", projectId],
     queryFn: async () => {
       const res = await api.get(`/projects/${projectId}/issues?sprint_id=backlog&page_size=100`);
@@ -274,8 +275,10 @@ export default function SprintPage() {
       )}
 
       {/* Active Sprint Section */}
-      {activeSprint ? (
-        <div className="bg-[var(--bg-1)] border border-[var(--border)] rounded-xl p-6 space-y-5 shadow-sm">
+      {loadingSprints ? (
+        <SprintSkeleton />
+      ) : activeSprint ? (
+        <div className="bg-[var(--bg-1)] border border-[var(--border)] rounded-xl p-6 space-y-5 shadow-sm animate-in fade-in duration-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--steel-dim)] text-[#BFD4FF] rounded-full">
@@ -353,7 +356,9 @@ export default function SprintPage() {
               )}
             </div>
 
-            {sprintIssues.length === 0 ? (
+            {loadingSprintIssues ? (
+              <IssueRowSkeleton count={3} />
+            ) : sprintIssues.length === 0 ? (
               <div className="text-center py-8 bg-[var(--bg-2)]/50 border border-[var(--border)] rounded-lg text-xs text-[var(--text-mid)]">
                 No issues in this sprint yet. Click{" "}
                 <button onClick={() => setShowAddIssuesModal(true)} className="text-[var(--steel)] underline font-semibold">
@@ -449,7 +454,7 @@ export default function SprintPage() {
       {/* Sprint History / Planned Sprints */}
       <div className="bg-[var(--bg-1)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
         <h3 className="font-semibold text-sm text-[var(--text-hi)] mb-4">All Sprints</h3>
-        {isLoading && <div className="text-[var(--text-mid)] py-6 text-center text-xs">Loading sprints...</div>}
+        {loadingSprints && <div className="py-4"><Spinner size="sm" label="Loading sprints..." /></div>}
         {sprints && sprints.length === 0 && (
           <div className="text-[var(--text-lo)] text-center py-8 text-xs">No sprints created yet for this project</div>
         )}
@@ -510,7 +515,11 @@ export default function SprintPage() {
             </p>
 
             <div className="max-h-60 overflow-y-auto divide-y divide-[var(--border)] border border-[var(--border)] rounded-lg bg-[var(--bg-2)]/30">
-              {backlogIssues.length === 0 ? (
+              {loadingBacklog ? (
+                <div className="py-6">
+                  <Spinner size="sm" label="Fetching backlog issues..." />
+                </div>
+              ) : backlogIssues.length === 0 ? (
                 <div className="p-4 text-center text-xs text-[var(--text-lo)]">
                   No unscheduled backlog issues found. Create new issues first!
                 </div>
